@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Manage Users{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <div>
+    <div class="page-eyebrow">Records · {{ users|length }} Total</div>
+    <h1 class="page-title">Manage Users</h1>
+    <p class="page-desc">View every registered biometric profile. Deleting a user removes their face data and automatically retrains the model.</p>
+  </div>
+  <a href="{{ url_for('register_page') }}" class="btn btn-primary">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg>
+    Register New
+  </a>
+</div>
+
+<div class="glass-card">
+  {% if users %}
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>ID</th>
+          <th>Department</th>
+          <th>Registered On</th>
+          <th style="text-align:right;">Actions</th>
+        </tr>
+      </thead>
+      <tbody id="usersTableBody">
+        {% for u in users %}
+        <tr data-db-id="{{ u.id }}">
+          <td style="color:var(--text-hi); font-weight:500;">{{ u.name }}</td>
+          <td class="mono">{{ u.user_id }}</td>
+          <td>{{ u.department }}</td>
+          <td class="mono text-low">{{ u.created_at }}</td>
+          <td style="text-align:right;">
+            <button class="btn btn-danger btn-sm delete-btn" data-id="{{ u.id }}" data-name="{{ u.name }}">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+              Delete
+            </button>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+    <h3>No users registered yet</h3>
+    <p>Register your first face profile to get started.</p>
+    <a href="{{ url_for('register_page') }}" class="btn btn-primary">Register a Face</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/users.js') }}"></script>
+{% endblock %}

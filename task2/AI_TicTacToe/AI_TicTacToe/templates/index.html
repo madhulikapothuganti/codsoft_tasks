@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Tic-Tac-Toe | Premium Edition</title>
+<meta name="description" content="A premium AI-powered Tic-Tac-Toe game with unbeatable Minimax AI, multiple difficulty levels, and a neon glassmorphism UI.">
+
+<link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/logo.svg') }}">
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+
+<!-- Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body data-theme="dark">
+
+<canvas id="particle-canvas"></canvas>
+<canvas id="confetti-canvas"></canvas>
+
+<!-- ==================== NAVBAR ==================== -->
+<header class="navbar">
+  <div class="navbar-left">
+    <img src="{{ url_for('static', filename='images/logo.svg') }}" alt="AI Tic-Tac-Toe logo" class="logo-img">
+    <div class="brand">
+      <h1>AI TIC-TAC-TOE</h1>
+      <span class="brand-sub">Premium Edition</span>
+    </div>
+  </div>
+
+  <div class="navbar-right">
+    <button id="sound-toggle" class="icon-btn" title="Toggle sound" aria-label="Toggle sound">
+      <i class="fa-solid fa-volume-high"></i>
+    </button>
+    <button id="theme-toggle" class="icon-btn" title="Toggle theme" aria-label="Toggle theme">
+      <i class="fa-solid fa-moon"></i>
+    </button>
+  </div>
+</header>
+
+<!-- ==================== MAIN ==================== -->
+<main class="app-container">
+
+  <!-- Setup panel -->
+  <section class="glass-panel setup-panel" id="setup-panel">
+    <h2 class="panel-title"><i class="fa-solid fa-sliders"></i> Game Setup</h2>
+
+    <div class="setup-group">
+      <label>Mode</label>
+      <div class="pill-group" id="mode-group">
+        <button class="pill active" data-mode="pvc"><i class="fa-solid fa-user"></i> vs <i class="fa-solid fa-robot"></i> Human vs AI</button>
+        <button class="pill" data-mode="pvp"><i class="fa-solid fa-user"></i> vs <i class="fa-solid fa-user"></i> Human vs Human</button>
+        <button class="pill" data-mode="cvc"><i class="fa-solid fa-robot"></i> vs <i class="fa-solid fa-robot"></i> AI vs AI Demo</button>
+      </div>
+    </div>
+
+    <div class="setup-group" id="difficulty-group">
+      <label>Difficulty</label>
+      <div class="pill-group" id="difficulty-pills">
+        <button class="pill" data-difficulty="easy">Easy</button>
+        <button class="pill" data-difficulty="medium">Medium</button>
+        <button class="pill" data-difficulty="hard">Hard</button>
+        <button class="pill active" data-difficulty="impossible">Impossible</button>
+      </div>
+    </div>
+
+    <div class="setup-group">
+      <label>Play As</label>
+      <div class="pill-group" id="symbol-group">
+        <button class="pill active" data-symbol="X">X (goes first)</button>
+        <button class="pill" data-symbol="O">O (goes second)</button>
+      </div>
+    </div>
+
+    <button class="primary-btn ripple" id="start-btn">
+      <i class="fa-solid fa-play"></i> Start Game
+    </button>
+  </section>
+
+  <!-- Game panel -->
+  <section class="game-panel" id="game-panel" hidden>
+
+    <div class="glass-panel status-bar">
+      <div class="status-item">
+        <span class="status-label">Turn</span>
+        <span class="status-value" id="turn-indicator">X</span>
+      </div>
+      <div class="status-item">
+        <span class="status-label"><i class="fa-regular fa-clock"></i> Time</span>
+        <span class="status-value" id="timer">00:00</span>
+      </div>
+      <div class="status-item">
+        <span class="status-label">Mode</span>
+        <span class="status-value" id="mode-indicator">-</span>
+      </div>
+      <button class="icon-btn" id="restart-btn" title="Restart game" aria-label="Restart game">
+        <i class="fa-solid fa-rotate-right"></i>
+      </button>
+      <button class="icon-btn" id="change-setup-btn" title="Change setup" aria-label="Change setup">
+        <i class="fa-solid fa-gear"></i>
+      </button>
+    </div>
+
+    <div class="board-wrapper">
+      <div class="board" id="board">
+        <!-- 9 cells injected by JS -->
+      </div>
+      <div class="thinking-indicator" id="thinking-indicator" hidden>
+        <span class="loader"></span> AI is thinking...
+      </div>
+    </div>
+
+    <div class="glass-panel scoreboard">
+      <h3><i class="fa-solid fa-trophy"></i> Scoreboard</h3>
+      <div class="score-grid">
+        <div class="score-box score-x">
+          <span class="score-label">X Wins</span>
+          <span class="score-value" id="score-x">0</span>
+        </div>
+        <div class="score-box score-draw">
+          <span class="score-label">Draws</span>
+          <span class="score-value" id="score-draw">0</span>
+        </div>
+        <div class="score-box score-o">
+          <span class="score-label">O Wins</span>
+          <span class="score-value" id="score-o">0</span>
+        </div>
+      </div>
+      <button class="secondary-btn ripple" id="reset-scores-btn">
+        <i class="fa-solid fa-eraser"></i> Reset Scores
+      </button>
+    </div>
+
+    <div class="glass-panel history-panel">
+      <h3><i class="fa-solid fa-list-ol"></i> Move History</h3>
+      <ol id="move-history" class="move-history"></ol>
+    </div>
+
+  </section>
+
+</main>
+
+<footer class="app-footer">
+  Built with <i class="fa-solid fa-heart" style="color:#ff5faf"></i> using Flask, Minimax &amp; Alpha-Beta Pruning
+</footer>
+
+<!-- ==================== WIN / DRAW MODAL ==================== -->
+<div class="modal-overlay" id="modal-overlay" hidden>
+  <div class="glass-panel modal-box">
+    <div class="modal-icon" id="modal-icon"><i class="fa-solid fa-trophy"></i></div>
+    <h2 id="modal-title">Player X Wins!</h2>
+    <p id="modal-subtitle">Great game!</p>
+    <div class="modal-actions">
+      <button class="primary-btn ripple" id="modal-play-again">
+        <i class="fa-solid fa-rotate-right"></i> Play Again
+      </button>
+      <button class="secondary-btn ripple" id="modal-change-setup">
+        <i class="fa-solid fa-gear"></i> Change Setup
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Audio elements -->
+<audio id="sfx-click" src="{{ url_for('static', filename='sounds/click.wav') }}" preload="auto"></audio>
+<audio id="sfx-move" src="{{ url_for('static', filename='sounds/move.wav') }}" preload="auto"></audio>
+<audio id="sfx-win" src="{{ url_for('static', filename='sounds/win.wav') }}" preload="auto"></audio>
+<audio id="sfx-draw" src="{{ url_for('static', filename='sounds/draw.wav') }}" preload="auto"></audio>
+<audio id="sfx-error" src="{{ url_for('static', filename='sounds/error.wav') }}" preload="auto"></audio>
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

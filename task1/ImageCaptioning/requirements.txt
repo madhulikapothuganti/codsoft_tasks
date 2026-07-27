@@ -1,0 +1,19 @@
+# ==============================================
+# AI Image Caption Generator - requirements.txt
+# Tested for Python 3.11 on Windows 11
+# ==============================================
+
+# --- Web Framework ---
+Flask==3.0.3
+Werkzeug==3.0.3
+
+# --- Deep Learning / Model Inference ---
+torch==2.3.1
+torchvision==0.18.1
+transformers==4.42.4
+
+# --- Image Handling ---
+Pillow==10.4.0
+
+# --- Core numerical dependency (pinned for torch/transformers compatibility) ---
+numpy==1.26.4

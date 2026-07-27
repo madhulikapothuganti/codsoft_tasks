@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Detect Faces{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <div>
+    <div class="page-eyebrow">Image Analysis</div>
+    <h1 class="page-title">Detect Faces</h1>
+    <p class="page-desc">Upload any photo — the system draws a bounding box around every face it finds using OpenCV's Haar Cascade detector.</p>
+  </div>
+</div>
+
+<div class="grid grid-2">
+  <div class="glass-card card-pad">
+    <div class="section-title">1 · Upload Image</div>
+    <div class="section-sub">JPG, PNG, BMP or WEBP · up to 16MB.</div>
+
+    <label for="fileInput" id="dropZone" class="glass-card" style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; padding:40px 20px; cursor:pointer; border-style:dashed; border-color:var(--glass-border);">
+      <svg viewBox="0 0 24 24" fill="none" stroke="var(--scan-cyan)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="34" height="34"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      <div class="text-mid" style="font-size:13.5px; text-align:center;">Drag & drop an image here, or <strong style="color:var(--scan-cyan);">click to browse</strong></div>
+      <input type="file" id="fileInput" accept=".jpg,.jpeg,.png,.bmp,.webp" hidden>
+    </label>
+
+    <div id="fileNameRow" class="flex items-center justify-between mt-16" style="display:none;">
+      <span class="text-mid mono" id="fileNameLabel" style="font-size:12.5px;"></span>
+      <button class="btn btn-ghost btn-sm" id="clearFileBtn">Clear</button>
+    </div>
+
+    <button class="btn btn-primary btn-block mt-16" id="detectBtn" disabled>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/><circle cx="12" cy="12" r="3.2"/></svg>
+      Run Detection
+    </button>
+  </div>
+
+  <div class="glass-card card-pad">
+    <div class="section-title">2 · Result</div>
+    <div class="section-sub">Detected faces are outlined in green.</div>
+
+    <div class="camera-stage viewfinder" id="resultStage" style="background:rgba(255,255,255,0.02);">
+      <img id="resultImage" style="width:100%; height:100%; object-fit:contain; display:none;">
+      <div class="camera-placeholder" id="resultPlaceholder">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/></svg>
+        <span>Detected faces will appear here.</span>
+      </div>
+    </div>
+
+    <div class="flex items-center justify-between mt-16">
+      <span class="text-mid" style="font-size:13px;">Faces detected</span>
+      <span class="stat-value" style="font-size:22px;" id="faceCountLabel">—</span>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/detect.js') }}"></script>
+{% endblock %}

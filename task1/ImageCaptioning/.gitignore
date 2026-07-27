@@ -1,0 +1,31 @@
+# Virtual environment
+venv/
+env/
+ENV/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Uploaded images (keep folder, ignore contents)
+uploads/*
+!uploads/.gitkeep
+
+# Hugging Face / PyTorch model cache (if stored locally in project)
+.cache/
+*.bin
+*.safetensors
+
+# Flask
+instance/
+.flaskenv
+
+# IDE / OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Env files
+.env

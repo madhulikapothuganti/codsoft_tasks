@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Recognize Live{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <div>
+    <div class="page-eyebrow">Live Recognition</div>
+    <h1 class="page-title">Recognize Live</h1>
+    <p class="page-desc">Scans faces from your webcam in real time and automatically logs attendance for recognized users.</p>
+  </div>
+</div>
+
+{% if not model_ready %}
+<div class="alert-banner warning">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/><path d="M12 9v4M12 17h.01"/></svg>
+  <span>The recognition model hasn't been trained yet. <a href="{{ url_for('train_page') }}" style="text-decoration:underline;">Train the model</a> before starting live recognition.</span>
+</div>
+{% endif %}
+
+<div class="grid grid-2">
+  <div class="glass-card card-pad">
+    <div class="section-title">Live Feed</div>
+    <div class="section-sub">Recognized faces are outlined green, unknown faces red.</div>
+
+    <div class="camera-stage viewfinder" id="cameraStage">
+      <video id="video" autoplay playsinline muted></video>
+      <canvas id="overlay" class="overlay"></canvas>
+      <div class="camera-scanline" id="scanline"></div>
+      <div class="camera-placeholder" id="cameraPlaceholder">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+        <span>Press "Start Camera" to begin live recognition.</span>
+      </div>
+    </div>
+
+    <div class="flex gap-12 mt-16">
+      <button class="btn btn-primary btn-block" id="startBtn" {% if not model_ready %}disabled{% endif %}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m23 7-7 5 7 5V7Z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+        Start Camera
+      </button>
+      <button class="btn btn-ghost btn-block" id="stopBtn" disabled>Stop</button>
+    </div>
+  </div>
+
+  <div class="glass-card card-pad">
+    <div class="section-title">Recognition Feed</div>
+    <div class="section-sub">Latest scan results appear here as they happen.</div>
+
+    <div id="recognitionList" style="display:flex; flex-direction:column; gap:10px; max-height:420px; overflow-y:auto;">
+      <div class="empty-state" id="recognitionEmpty" style="padding:40px 10px;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+        <h3>No scans yet</h3>
+        <p>Start the camera to see recognition results here.</p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/recognize.js') }}"></script>
+{% endblock %}

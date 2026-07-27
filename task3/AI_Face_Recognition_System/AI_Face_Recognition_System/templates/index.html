@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <div>
+    <div class="page-eyebrow">System Overview</div>
+    <h1 class="page-title">Dashboard</h1>
+    <p class="page-desc">Live status of your face recognition pipeline — registrations, training state, and today's attendance at a glance.</p>
+  </div>
+  <a href="{{ url_for('recognize_page') }}" class="btn btn-primary">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+    Start Recognition
+  </a>
+</div>
+
+<div class="grid grid-4 mb-16">
+  <div class="glass-card stat-card">
+    <div class="stat-top">
+      <div class="stat-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      </div>
+    </div>
+    <div class="stat-value" id="statTotalUsers">{{ stats.total_users }}</div>
+    <div class="stat-label">Registered Users</div>
+  </div>
+
+  <div class="glass-card stat-card">
+    <div class="stat-top">
+      <div class="stat-icon violet">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="m9 16 2 2 4-4"/></svg>
+      </div>
+    </div>
+    <div class="stat-value" id="statTodayAttendance">{{ stats.today_attendance }}</div>
+    <div class="stat-label">Today's Attendance</div>
+  </div>
+
+  <div class="glass-card stat-card">
+    <div class="stat-top">
+      <div class="stat-icon {{ 'success' if model_ready else 'danger' }}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"/><circle cx="12" cy="12" r="3"/></svg>
+      </div>
+    </div>
+    <div class="stat-value" style="font-size:20px;">{{ 'Ready' if model_ready else 'Not Trained' }}</div>
+    <div class="stat-label">Recognition Model</div>
+    <div class="status-pill {{ 'online' if model_ready else 'pending' }}">
+      <span class="dot"></span>{{ 'Model trained · ' ~ total_images ~ ' images' if model_ready else 'Awaiting training' }}
+    </div>
+  </div>
+
+  <div class="glass-card stat-card">
+    <div class="stat-top">
+      <div class="stat-icon" id="cameraIcon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m23 7-7 5 7 5V7Z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+      </div>
+    </div>
+    <div class="stat-value" style="font-size:20px;" id="cameraStatusText">Checking…</div>
+    <div class="stat-label">Camera Status</div>
+    <div class="status-pill pending" id="cameraStatusPill"><span class="dot"></span>Detecting device</div>
+  </div>
+</div>
+
+<div class="grid grid-2">
+  <div class="glass-card card-pad">
+    <div class="section-title">Quick Actions</div>
+    <div class="section-sub">Jump straight into the core workflow of the system.</div>
+    <div class="grid grid-2" style="gap:14px;">
+      <a href="{{ url_for('register_page') }}" class="glass-card hoverable card-pad" style="display:flex; flex-direction:column; gap:8px; text-decoration:none;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--scan-cyan)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg>
+        <strong style="font-family:var(--font-display); font-size:14px;">Register a Face</strong>
+        <span class="text-low" style="font-size:12px;">Capture 30 images via webcam</span>
+      </a>
+      <a href="{{ url_for('train_page') }}" class="glass-card hoverable card-pad" style="display:flex; flex-direction:column; gap:8px; text-decoration:none;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--violet)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"/><circle cx="12" cy="12" r="3"/></svg>
+        <strong style="font-family:var(--font-display); font-size:14px;">Train Model</strong>
+        <span class="text-low" style="font-size:12px;">Rebuild the LBPH recognizer</span>
+      </a>
+      <a href="{{ url_for('detect_page') }}" class="glass-card hoverable card-pad" style="display:flex; flex-direction:column; gap:8px; text-decoration:none;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/><circle cx="12" cy="12" r="3.2"/></svg>
+        <strong style="font-family:var(--font-display); font-size:14px;">Detect Faces</strong>
+        <span class="text-low" style="font-size:12px;">Upload an image to scan</span>
+      </a>
+      <a href="{{ url_for('attendance_page') }}" class="glass-card hoverable card-pad" style="display:flex; flex-direction:column; gap:8px; text-decoration:none;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--warning)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        <strong style="font-family:var(--font-display); font-size:14px;">View Attendance</strong>
+        <span class="text-low" style="font-size:12px;">Browse & export records</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="glass-card card-pad">
+    <div class="section-title">Pipeline Status</div>
+    <div class="section-sub">Where your system currently stands.</div>
+
+    <div class="flex items-center justify-between" style="padding:12px 0; border-bottom:1px solid var(--glass-border);">
+      <span class="text-mid" style="font-size:13px;">Dataset images captured</span>
+      <span class="mono" style="color:var(--text-hi);">{{ total_images }}</span>
+    </div>
+    <div class="flex items-center justify-between" style="padding:12px 0; border-bottom:1px solid var(--glass-border);">
+      <span class="text-mid" style="font-size:13px;">Recognizer model</span>
+      <span class="badge {{ 'success' if model_ready else 'muted' }}">{{ 'trainer.yml saved' if model_ready else 'not generated' }}</span>
+    </div>
+    <div class="flex items-center justify-between" style="padding:12px 0;">
+      <span class="text-mid" style="font-size:13px;">Attendance logged today</span>
+      <span class="mono" style="color:var(--text-hi);">{{ stats.today_attendance }}</span>
+    </div>
+
+    {% if not model_ready %}
+    <a href="{{ url_for('train_page') }}" class="btn btn-primary btn-block mt-16">Train the model now</a>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+(function () {
+  const iconEl = document.getElementById("cameraIcon");
+  const textEl = document.getElementById("cameraStatusText");
+  const pillEl = document.getElementById("cameraStatusPill");
+
+  function setStatus(state, label, pillText) {
+    pillEl.className = "status-pill " + state;
+    pillEl.innerHTML = '<span class="dot"></span>' + pillText;
+    textEl.textContent = label;
+    iconEl.className = "stat-icon " + (state === "online" ? "success" : state === "offline" ? "danger" : "");
+  }
+
+  if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
+    setStatus("offline", "Unsupported", "Browser lacks camera API");
+    return;
+  }
+
+  navigator.mediaDevices.enumerateDevices()
+    .then((devices) => {
+      const hasCamera = devices.some((d) => d.kind === "videoinput");
+      if (hasCamera) {
+        setStatus("online", "Available", "Camera device found");
+      } else {
+        setStatus("offline", "Not Found", "No camera detected");
+      }
+    })
+    .catch(() => setStatus("offline", "Error", "Could not query devices"));
+})();
+</script>
+{% endblock %}

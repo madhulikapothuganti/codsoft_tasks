@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}Register Face{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <div>
+    <div class="page-eyebrow">Enrollment</div>
+    <h1 class="page-title">Register Face</h1>
+    <p class="page-desc">Enter the person's details, then capture {{ required_captures }} face samples via webcam to build their biometric profile.</p>
+  </div>
+</div>
+
+<div class="grid grid-2">
+  <!-- Step 1: Details form -->
+  <div class="glass-card card-pad" id="detailsCard">
+    <div class="section-title">1 · Person Details</div>
+    <div class="section-sub">This information is stored alongside the face profile.</div>
+
+    <form id="detailsForm" autocomplete="off">
+      <div class="field">
+        <label for="fullName">Full Name</label>
+        <input type="text" id="fullName" placeholder="e.g. Aditya Sharma" required>
+      </div>
+      <div class="field">
+        <label for="userId">Unique ID</label>
+        <input type="text" id="userId" placeholder="e.g. EMP-1024" required>
+        <div class="field-hint">Used to identify this person during recognition & attendance.</div>
+      </div>
+      <div class="field">
+        <label for="department">Department</label>
+        <input type="text" id="department" placeholder="e.g. Artificial Intelligence" required>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block" id="startBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m23 7-7 5 7 5V7Z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+        Start Camera & Capture
+      </button>
+    </form>
+  </div>
+
+  <!-- Step 2: Camera capture -->
+  <div class="glass-card card-pad">
+    <div class="section-title">2 · Face Capture</div>
+    <div class="section-sub">Look directly at the camera and slowly turn your head for varied samples.</div>
+
+    <div class="camera-stage viewfinder" id="cameraStage">
+      <video id="video" autoplay playsinline muted></video>
+      <canvas id="overlay" class="overlay"></canvas>
+      <div class="camera-scanline" id="scanline"></div>
+      <div class="camera-placeholder" id="cameraPlaceholder">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m23 7-7 5 7 5V7Z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+        <span>Fill in the details and press "Start Camera" to begin enrollment.</span>
+      </div>
+    </div>
+
+    <div class="capture-progress">
+      <div class="capture-progress-bar">
+        <div class="capture-progress-fill" id="progressFill"></div>
+      </div>
+      <div class="capture-progress-text">
+        <span id="progressText">0 / {{ required_captures }} samples</span>
+        <span id="progressStatus" class="text-low">Idle</span>
+      </div>
+    </div>
+
+    <div class="flex gap-12 mt-16">
+      <button class="btn btn-ghost btn-block" id="cancelBtn" disabled>Cancel</button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/register.js') }}"></script>
+<script>window.REQUIRED_CAPTURES = {{ required_captures }};</script>
+{% endblock %}

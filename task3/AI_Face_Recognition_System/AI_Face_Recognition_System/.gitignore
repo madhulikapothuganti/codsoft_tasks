@@ -1,0 +1,31 @@
+# Environment files
+.env
+.env.*
+
+# Python virtual environments
+venv/
+.venv/
+env/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# IDE files
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# SQLite databases
+*.db
+
+# Secrets
+secrets.json
+credentials.json
+config.local.py
